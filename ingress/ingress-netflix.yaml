@@ -1,0 +1,20 @@
+# https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: netflix-rule
+  namespace: vivekname
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: netflix.vivektiwari.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: service-netflix
+            port:
+              number: 80

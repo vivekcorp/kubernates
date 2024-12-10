@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: vivek-replicaset
+  namespace: vivekname
+spec:
+  replicas: 11
+  selector: 
+    matchExpressions:
+    - key: vivek
+      operator: In
+      values:
+      - kumar
+  template:
+    metadata: 
+      name: nginxin-pod
+      labels:
+        vivek: kumar
+    spec:
+      containers:
+      - name: nginxin-con
+        image: devopsinsiders/netflix-clone
+        ports:
+        - containerPort: 80

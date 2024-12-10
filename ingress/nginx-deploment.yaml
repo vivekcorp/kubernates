@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: vivekdeployment-nginx
+ namespace: vivekname
+ labels: 
+   app: vivekdeployment-nginx
+spec:
+  replicas: 1
+  selector: 
+    matchExpressions:
+    - key: vivekdev1
+      operator: In
+      values:
+       - nginx1
+  template:
+    metadata:
+      name: hunterpod-nginx
+      namespace: vivekname
+      labels:
+        vivekdev1: nginx1
+    spec:
+      containers:
+      - name: huntercon-nginx
+        image: nginx
+        ports:
+        - containerPort: 80

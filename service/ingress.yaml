@@ -1,0 +1,20 @@
+# https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vivekingress
+  namespace: vivekname
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+  - host: vivek.vivektiwari.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: privatecluster
+            port:
+              number: 80

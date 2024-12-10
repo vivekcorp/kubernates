@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vivek
+  namespace: vivekname
+
+spec:
+  containers:
+  - name: vivekcon1
+    image: ngnix
+    ports:
+    - containerPort: 80

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vivekfire
+  namespace: vivekname
+  labels:
+    app: "nginxapp"
+spec:
+  containers:
+  - name: nginx-app
+    image: nginx
+    ports:
+    - containerPort: 80

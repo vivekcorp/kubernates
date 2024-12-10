@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+ name: service-todo
+ namespace: vivekname
+spec:
+  selector: 
+    vivekdev: todo
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+
+  

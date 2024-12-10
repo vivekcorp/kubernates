@@ -1,0 +1,83 @@
+trigger:
+- main
+
+pool: Default
+# Use Linux agent for better script compatibility
+
+steps:
+# Step 1: Login to Azure and Set AKS Context
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'vmstop'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      Write-Host "Setting up AKS credentials"
+      az aks get-credentials --resource-group vivekcorp --name clusterdev --overwrite-existing
+
+# Step 2: Apply Kubernetes Configuration
+- task: Kubernetes@1
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: 'vmstop'
+    azureResourceGroup: 'vivekcorp'
+    kubernetesCluster: 'clusterdev'
+    namespace: 'vivekname'
+    command: 'apply'
+    useConfigurationFile: true
+    configuration: '$(System.DefaultWorkingDirectory)/Deployment.yaml'
+
+# Step 3: Configure Azure Application Gateway
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'vmstop'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      Write-Host "Configuring Azure Application Gateway"
+      az network application-gateway frontend-ip create `
+        --gateway-name appGatewayDev `
+        --resource-group vivekcorp `
+        --name publicFrontendIP `
+        --public-ip-address publicAppGatewayIP
+
+      az network application-gateway frontend-port create `
+        --gateway-name appGatewayDev `
+        --resource-group vivekcorp `
+        --name httpPort `
+        --port 80
+
+      az network application-gateway http-settings create `
+        --gateway-name appGatewayDev `
+        --resource-group vivekcorp `
+        --name httpSettings `
+        --port 80 `
+        --protocol Http
+
+      # Fetch AKS ingress IP dynamically
+      $ingressIp = az network public-ip show --resource-group vivekcorp --name ingressPublicIP --query "ipAddress" -o tsv
+      az network application-gateway backend-pool create `
+        --gateway-name appGatewayDev `
+        --resource-group vivekcorp `
+        --name backendPool `
+        --servers $ingressIp
+
+      az network application-gateway routing-rule create `
+        --gateway-name appGatewayDev `
+        --resource-group vivekcorp `
+        --name routingRule `
+        --rule-type Basic `
+        --http-listener httpListener `
+        --backend-pool backendPool `
+        --http-settings httpSettings
+
+# Step 4: Publish the Public URL
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'vmstop'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      Write-Host "Fetching public IP address for Application Gateway"
+      $publicIp = az network public-ip show --resource-group vivekcorp --name publicAppGatewayIP --query "ipAddress" -o tsv
+      Write-Host "Your application is accessible at http://$publicIp"

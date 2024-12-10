@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+ name: service-netflix
+ namespace: vivekname
+spec:
+  selector: 
+    vivekdev: deep
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+
+  

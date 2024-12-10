@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: vivekdeployment-todo
+ namespace: vivekname
+ labels: 
+   app: vivekdeployment-todo
+spec:
+  replicas: 1
+  selector: 
+    matchExpressions:
+    - key: vivekdev
+      operator: In
+      values:
+        - todo
+  template:
+    metadata:
+      name: hunterpod
+      namespace: vivekname
+      labels:
+        vivekdev: todo
+    spec:
+      containers:
+      - name: huntercon-todo
+        image: devopsinsiders/netflix-clone
+        ports:
+        - containerPort: 80

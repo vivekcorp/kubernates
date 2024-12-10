@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+ name: firefox-pod
+ namespace: vivekname
+spec: 
+  containers: 
+  - image: linuxserver/firefox
+    name: fireforx-cont
+    ports: 
+    - containerPort: 3000

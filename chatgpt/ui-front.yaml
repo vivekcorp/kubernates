@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webui-deployment
+  namespace: vivekname
+  labels:
+    app: webui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webui
+  template:
+    metadata:
+      labels:
+        app: webui
+    spec:
+      containers:
+      - name: webui
+        env:
+        - name: OLLAMA_BASE_URL
+          value: http://10.0.240.31
+        image: ghcr.io/open-webui/open-webui:main
+        ports:
+        - containerPort: 8080
